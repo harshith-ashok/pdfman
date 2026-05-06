@@ -19,3 +19,8 @@ Upload a PDF → extract text → save it as a .md file in a local vault.
 - `save_markdown` → writes Markdown file to vault
 
 ---
+
+## Phase: 0
+
+1. `/upload` endpoint in place for PDF ingestion
+2. basic conversion of uploaded PDF to markdown format
