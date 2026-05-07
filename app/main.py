@@ -2,13 +2,14 @@ from fastapi import FastAPI, UploadFile, File
 import shutil
 import os
 
-from tools.pdf import parse_pdf
-from tools.obsidian import save_markdown
+from graph.workflow import build_workflow
 
 app = FastAPI()
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+workflow = build_workflow()
 
 
 @app.post("/upload/")
@@ -18,13 +19,13 @@ async def upload_pdf(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    text = parse_pdf(file_path)
-
-    md_content = f"# {file.filename}\n\n{text}"
-
-    saved_path = save_markdown(file.filename, md_content)
+    result = workflow.invoke({
+        "file_path": file_path,
+        "text": "",
+        "output_path": ""
+    })
 
     return {
-        "message": "File processed",
-        "saved_to": saved_path
+        "message": "Processed via LangGraph",
+        "output": result["output_path"]
     }
