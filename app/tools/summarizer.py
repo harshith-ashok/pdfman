@@ -1,5 +1,3 @@
-# app/tools/summarizer.py
-
 from langchain_ollama import ChatOllama
 
 llm = ChatOllama(
@@ -8,24 +6,49 @@ llm = ChatOllama(
 )
 
 
-def summarize_text(text: str) -> str:
+def summarize_chunk(chunk: str) -> str:
     prompt = f"""
-You are an expert summarization assistant that writes in the style of a detailed, well-structured book.
-Summarize the following text into rich, thorough Obsidian-compatible notes.
+You are an expert summarization assistant that writes in the style of a detailed, well-structured book chapter.
 
-Requirements:
+Summarize the following chunk of text into rich, thorough Obsidian-compatible notes.
 
-- Use markdown with clear #, ##, and ### headings to organize content hierarchically
-- Write full, detailed bullet points — each point should be a complete thought, not a fragment
+**Requirements:**
+- Use markdown with clear `#`, `##`, and `###` headings to organize content hierarchically
+- Write **full, detailed bullet points** — each point should be a complete thought, not a fragment
 - Expand on key concepts with sub-bullets that provide context, nuance, and explanation
 - Preserve important arguments, examples, evidence, and reasoning from the original text
-- Include a ## Overview section at the top with a 3-5 sentence summary of the entire text
-- Include a ## Key Takeaways section at the bottom with the most important conclusions
-- Use bold for key terms and inline code for technical terms where appropriate
+- Use **bold** for key terms and `inline code` for technical terms where appropriate
+- Include a `## chunk Overview` section at the top with 2-4 sentences summarizing this section
+- Do not include emojis
 - Aim for depth over brevity — the goal is a thorough reference, not a quick recap
 
-Text:
-{text}
+**Text:**
+{chunk}
+"""
+
+    response = llm.invoke(prompt)
+
+    return response.content
+
+
+def combine_summaries(summaries: list[str]) -> str:
+    combined_text = "\n\n".join(summaries)
+
+    prompt = f"""
+You are an expert editor and summarization assistant. Your job is to merge multiple detailed section summaries into one unified, book-style reference document in Obsidian-compatible markdown.
+
+**Requirements:**
+- Begin with a `## Document Overview` section: a 4-6 sentence synthesis of the entire document's scope, argument, and significance
+- Merge and reorganize all sections under clear `#`, `##`, and `###` headings — group related ideas together even if they appeared in separate chunks
+- Eliminate redundancy: if the same concept appears multiple times, consolidate it into one rich, expanded entry rather than repeating it
+- Preserve and expand on all key arguments, examples, evidence, and reasoning — do not flatten detail in the name of brevity
+- Write **full, detailed bullet points** with sub-bullets that add context and explanation
+- Use **bold** for key terms and `inline code` for technical terms where appropriate
+- End with a `## Key Takeaways` section listing the most important conclusions and insights from the full document
+- The final output should read like a thorough book-chapter reference a researcher would rely on
+
+**Summaries:**
+{combined_text}
 """
 
     response = llm.invoke(prompt)

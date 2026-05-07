@@ -55,13 +55,15 @@ async def summarize_files(request: SummarizeRequest):
         result = workflow.invoke({
             "file_path": file_path,
             "text": "",
+            "chunks": [],
+            "chunk_summaries": [],
             "summary": "",
             "output_path": ""
         })
 
         results.append({
             "file": filename,
-            "saved_to": result["output_path"]
+            "saved_to": result["output_paths"]
         })
 
     return {
