@@ -1,0 +1,4 @@
+- [ ] Add option to convert PDF with text to obsidian compatible notes
+	- [ ] OCR
+	- [ ] Plain Text
+- [ ] Add option to add links, backlinks, TOC based on note content for said or chosen folder

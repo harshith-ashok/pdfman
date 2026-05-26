@@ -1,6 +1,7 @@
 from langchain_ollama import ChatOllama
 import json
 import re
+from tools.llm_utils import invoke_with_retry
 
 llm = ChatOllama(
     model="qwen2.5:3b",
@@ -35,9 +36,10 @@ TEXT:
 ----------------
 """
 
-    response = llm.invoke(prompt)
-
-    content = response.content.strip()
+    content = invoke_with_retry(
+        llm,
+        prompt
+    ).strip()
 
     print("RAW TOPIC RESPONSE:")
     print(content)

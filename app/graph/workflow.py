@@ -1,3 +1,7 @@
+import os
+import time
+import logging
+from concurrent.futures import ThreadPoolExecutor
 from tools.note_generator import generate_note
 from tools.topic_extractor import extract_topics
 from tools.summarizer import combine_summaries
@@ -7,22 +11,35 @@ from typing import TypedDict
 
 from langgraph.graph import StateGraph
 
-from tools.pdf import parse_pdf
+from tools.pdf import parse_document
 from tools.obsidian import save_markdown
+from tools.jobs import record_job_timing
+from tools.jobs import update_job
+
+logger = logging.getLogger(__name__)
+
+MAX_SUMMARY_WORKERS = max(
+    1,
+    int(os.getenv("PDFMAN_SUMMARY_WORKERS", "4"))
+)
 
 
 class WorkflowState(TypedDict):
+    job_id: str
     file_path: str
+    vault_path: str
     text: str
     chunks: list[str]
     chunk_summaries: list[str]
     topics: list[str]
     notes: dict[str, str]
     output_paths: list[str]
+    summary: str
 
 
 def extract_topics_node(state: WorkflowState):
     print("Running extract_topics_node")
+    started_at = time.perf_counter()
 
     combined = "\n\n".join(
         state["chunk_summaries"]
@@ -33,6 +50,12 @@ def extract_topics_node(state: WorkflowState):
     print("TOPICS:")
     print(topics)
 
+    _record_stage_timing(
+        state["job_id"],
+        "extract_topics",
+        started_at
+    )
+
     return {
         **state,
         "topics": topics
@@ -41,6 +64,13 @@ def extract_topics_node(state: WorkflowState):
 
 def generate_notes_node(state: WorkflowState):
     print("Running generate_notes_node")
+    started_at = time.perf_counter()
+
+    update_job(
+        state["job_id"],
+        stage="link",
+        progress=0.85
+    )
 
     notes = {}
 
@@ -61,6 +91,12 @@ def generate_notes_node(state: WorkflowState):
 
         notes[topic] = note
 
+    _record_stage_timing(
+        state["job_id"],
+        "generate_notes",
+        started_at
+    )
+
     return {
         **state,
         "notes": notes
@@ -69,6 +105,7 @@ def generate_notes_node(state: WorkflowState):
 
 def save_notes_node(state: WorkflowState):
     print("Running save_notes_node")
+    started_at = time.perf_counter()
 
     output_paths = []
 
@@ -79,10 +116,21 @@ def save_notes_node(state: WorkflowState):
         path = save_markdown(
             pdf_name=pdf_name,
             note_title=topic,
-            content=content
+            content=content,
+            vault_path=state["vault_path"]
         )
 
         output_paths.append(path)
+
+    _record_stage_timing(
+        state["job_id"],
+        "save_notes",
+        started_at
+    )
+    update_job(
+        state["job_id"],
+        progress=0.98
+    )
 
     return {
         **state,
@@ -92,10 +140,25 @@ def save_notes_node(state: WorkflowState):
 
 def parse_pdf_node(state: WorkflowState) -> WorkflowState:
     print("Running parse_pdf_node")
+    started_at = time.perf_counter()
 
-    text = parse_pdf(state["file_path"])
+    update_job(
+        state["job_id"],
+        status="running",
+        stage="parse",
+        progress=0.2,
+        current_file=os.path.basename(
+            state["file_path"]
+        )
+    )
 
-    print("Parse State:", state)
+    text = parse_document(state["file_path"])
+
+    _record_stage_timing(
+        state["job_id"],
+        "parse_document",
+        started_at
+    )
 
     return {
         **state,
@@ -105,8 +168,15 @@ def parse_pdf_node(state: WorkflowState) -> WorkflowState:
 
 def chunk_node(state: WorkflowState) -> WorkflowState:
     print("Running chunk_node")
+    started_at = time.perf_counter()
 
     chunks = chunk_text(state["text"])
+
+    _record_stage_timing(
+        state["job_id"],
+        "chunk_text",
+        started_at
+    )
 
     return {
         **state,
@@ -116,12 +186,34 @@ def chunk_node(state: WorkflowState) -> WorkflowState:
 
 def summarize_chunks_node(state: WorkflowState) -> WorkflowState:
     print("Running summarize_chunks_node")
+    started_at = time.perf_counter()
 
-    summaries = []
+    update_job(
+        state["job_id"],
+        stage="summarize",
+        progress=0.5
+    )
 
-    for chunk in state["chunks"]:
-        summary = summarize_chunk(chunk)
-        summaries.append(summary)
+    chunks = state["chunks"]
+
+    with ThreadPoolExecutor(
+        max_workers=min(
+            MAX_SUMMARY_WORKERS,
+            len(chunks) or 1
+        )
+    ) as executor:
+        summaries = list(
+            executor.map(
+                summarize_chunk,
+                chunks
+            )
+        )
+
+    _record_stage_timing(
+        state["job_id"],
+        "summarize_chunks",
+        started_at
+    )
 
     return {
         **state,
@@ -131,9 +223,16 @@ def summarize_chunks_node(state: WorkflowState) -> WorkflowState:
 
 def combine_summaries_node(state: WorkflowState) -> WorkflowState:
     print("Running combine_summaries_node")
+    started_at = time.perf_counter()
 
     final_summary = combine_summaries(
         state["chunk_summaries"]
+    )
+
+    _record_stage_timing(
+        state["job_id"],
+        "combine_summaries",
+        started_at
     )
 
     return {
@@ -152,7 +251,12 @@ def save_markdown_node(state: WorkflowState) -> WorkflowState:
 {state['summary']}
 """
 
-    output_path = save_markdown(filename, content)
+    output_path = save_markdown(
+        filename,
+        filename,
+        content,
+        vault_path=state["vault_path"]
+    )
 
     return {
         **state,
@@ -194,3 +298,21 @@ def build_workflow():
     )
 
     return builder.compile()
+
+
+def _record_stage_timing(
+    job_id: str,
+    stage_name: str,
+    started_at: float
+) -> None:
+    elapsed = time.perf_counter() - started_at
+    logger.info(
+        "%s completed in %.2fs",
+        stage_name,
+        elapsed
+    )
+    record_job_timing(
+        job_id,
+        stage_name,
+        elapsed
+    )

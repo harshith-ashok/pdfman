@@ -1,4 +1,5 @@
 from langchain_ollama import ChatOllama
+from tools.llm_utils import invoke_with_retry
 
 llm = ChatOllama(
     model="qwen2.5:3b",
@@ -26,9 +27,7 @@ Summarize the following chunk of text into rich, thorough Obsidian-compatible no
 {chunk}
 """
 
-    response = llm.invoke(prompt)
-
-    return response.content
+    return invoke_with_retry(llm, prompt)
 
 
 def combine_summaries(summaries: list[str]) -> str:
@@ -51,6 +50,4 @@ You are an expert editor and summarization assistant. Your job is to merge multi
 {combined_text}
 """
 
-    response = llm.invoke(prompt)
-
-    return response.content
+    return invoke_with_retry(llm, prompt)

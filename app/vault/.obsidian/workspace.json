@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "dda81a56f3ebf341",
+        "id": "5a98c3e94d06d0e2",
         "type": "tabs",
         "children": [
           {
-            "id": "480cde957e9b9979",
+            "id": "ea7646f223a2a835",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Unit 4 AI Notes/First-Order Logic (FOL).md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "First-Order Logic (FOL)"
+              "title": "New tab"
             }
           }
         ]
@@ -183,14 +179,42 @@
       "bases:Create new base": false
     }
   },
-  "active": "480cde957e9b9979",
+  "active": "ea7646f223a2a835",
   "lastOpenFiles": [
-    "Unit 4 AI Notes/Knowledge Representation.md",
-    "Unit 4 AI Notes/Propositional Logic.md",
-    "Unit 4 AI Notes/Rule-Based Systems.md",
-    "Unit 4 AI Notes/Semantic Networks.md",
-    "Unit 4 AI Notes/Frames.md",
-    "Unit 4 AI Notes/First-Order Logic (FOL).md",
+    "Daa unit 2 - DAA unit 2 notes/srmpyqs@gmail.com.md",
+    "DAA NOTES UNIT 5/Pattern Matching.md",
+    "unit 1,2.md/Minimum Spanning Tree (MST).md",
+    "unit 1,2.md/Matrix Chain Multiplication.md",
+    "unit 1,2.md/Huffman Coding Using Greedy Approach.md",
+    "unit 1,2.md",
+    "Time Complexities.md/Sequential Sort.md",
+    "Time Complexities.md/Quick Sort.md",
+    "Time Complexities.md/Merge Sort.md",
+    "Time Complexities.md/Insertion Sort.md",
+    "Time Complexities.md/Binary Search.md",
+    "Time Complexities.md",
+    "unit 3,4,5.md/Quick Hull Algorithm.md",
+    "unit 3,4,5.md/Insertion Sort.md",
+    "unit 3,4,5.md/Closest Pair of Points Problem.md",
+    "unit 3,4,5.md/Asymptotic Notation.md",
+    "unit 3,4,5.md",
+    "topics.md/Sorting Algorithms.md",
+    "topics.md/Searching Techniques.md",
+    "topics.md/Graph Theory Applications.md",
+    "topics.md/Dynamic Programming.md",
+    "topics.md/Complexity Analysis.md",
+    "topics.md",
+    "DAA NOTES UNIT 5/Topic 1.md",
+    "DAA NOTES UNIT 4/Backtracking Approach for Solving Problems.md",
+    "Daa unit 2 - DAA unit 2 notes/lOMoARcPSD52021650.md",
+    "Daa unit 2 - DAA unit 2 notes",
+    "DAA NOTES UNIT 4",
+    "DAA NOTES UNIT 5",
+    "agentic-ai/course-2",
+    "references",
+    "projects",
+    "hackathon",
+    "agentic-ai",
     "Unit 4 AI Notes"
   ]
 }

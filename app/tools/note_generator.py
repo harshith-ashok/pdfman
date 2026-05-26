@@ -1,4 +1,5 @@
 from tools.cleaner import clean_markdown_output
+from tools.llm_utils import invoke_with_retry
 from langchain_ollama import ChatOllama
 
 llm = ChatOllama(
@@ -51,10 +52,8 @@ TEXT:
 {text[:5000]}
 """
 
-    response = llm.invoke(prompt)
-
     cleaned = clean_markdown_output(
-        response.content
+        invoke_with_retry(llm, prompt)
     )
 
     return cleaned

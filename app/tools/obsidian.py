@@ -1,7 +1,10 @@
 import os
 import re
 
-VAULT_PATH = "vault"
+APP_DIR = os.path.dirname(
+    os.path.dirname(__file__)
+)
+VAULT_PATH = os.path.join(APP_DIR, "vault")
 
 
 def sanitize_filename(name: str) -> str:
@@ -11,7 +14,8 @@ def sanitize_filename(name: str) -> str:
 def save_markdown(
     pdf_name: str,
     note_title: str,
-    content: str
+    content: str,
+    vault_path: str = VAULT_PATH
 ) -> str:
 
     pdf_folder = sanitize_filename(
@@ -21,7 +25,7 @@ def save_markdown(
     note_title = sanitize_filename(note_title)
 
     folder_path = os.path.join(
-        VAULT_PATH,
+        vault_path,
         pdf_folder
     )
 
