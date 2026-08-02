@@ -195,7 +195,7 @@ Example:
 
 ```bash
 curl -X POST "http://127.0.0.1:8120/upload" \
-  -F "files=@/Users/harshith/Downloads/Unit 4 AI Notes.pdf"
+  -F "files=@/Users/harshith/Downloads/Details.pdf"
 ```
 
 ---
@@ -207,8 +207,7 @@ curl -X POST "http://127.0.0.1:8120/summarize" \
   -H "Content-Type: application/json" \
   -d '{
     "filenames": [
-      "book1.pdf",
-      "book2.pdf"
+      "Daa unit-1 notes.pdf",
     ]
   }'
 ```

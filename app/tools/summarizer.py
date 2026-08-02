@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from tools.llm_utils import invoke_with_retry
 
 llm = ChatOllama(
-    model="qwen2.5:3b",
+    model="gpt-oss:120b-cloud",
     temperature=0
 )
 

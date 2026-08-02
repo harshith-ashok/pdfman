@@ -1,0 +1,46 @@
+{
+  "job_id": "daac4d5fd61b4441af17c71bc20f1cc8",
+  "session_id": "84b669928490467bace4fbd3294b2904",
+  "status": "completed",
+  "stage": "completed",
+  "progress": 1.0,
+  "current_file": "Details.pdf",
+  "completed_files": 1,
+  "total_files": 1,
+  "filenames": [
+    "Details.pdf"
+  ],
+  "results": [
+    {
+      "file": "Details.pdf",
+      "saved_to": [
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Patent Summary \u2013 IN202641052767 A1.md",
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Bibliographic Information.md",
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Core Problem Addressed.md",
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Inventive Solution \u2013 High-Level Overview.md",
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Detailed System Components.md",
+        "/Users/harshith/Dev/Projects/pdfman/app/data/sessions/84b669928490467bace4fbd3294b2904/vault/Details/Autonomous Agents.md"
+      ],
+      "topics": [
+        "Patent Summary \u2013 IN202641052767 A1",
+        "Bibliographic Information",
+        "Core Problem Addressed",
+        "Inventive Solution \u2013 High-Level Overview",
+        "Detailed System Components",
+        "Autonomous Agents"
+      ]
+    }
+  ],
+  "error": null,
+  "timings": {
+    "parse_document": 0.036,
+    "chunk_text": 0.0,
+    "summarize_chunks": 50.494,
+    "extract_topics": 3.71,
+    "generate_notes": 82.041,
+    "save_notes": 0.005,
+    "total_job": 136.306
+  },
+  "created_at": "2026-07-31T06:34:32.784375+00:00",
+  "updated_at": "2026-07-31T06:36:49.100906+00:00"
+}
